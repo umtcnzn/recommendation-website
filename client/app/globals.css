@@ -1,0 +1,16 @@
+
+@layer tailwind-base, primereact, tailwind-utilities;
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+@import "primereact/resources/themes/lara-dark-blue/theme.css";     
+@import "primereact/resources/primereact.min.css";
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
