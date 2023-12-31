@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { Open_Sans } from 'next/font/google'
 import './globals.css'
 import { PrimeReactProvider} from 'primereact/api'
-import { AuthProvider } from './_context/userContext'
+import { AuthProvider, useAuth } from './_context/userContext'
+import { useEffect } from 'react'
 
 
 const inter = Open_Sans({ subsets: ['latin'] })
@@ -17,7 +18,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  
+
+
   return (
     <AuthProvider>
       <PrimeReactProvider>
