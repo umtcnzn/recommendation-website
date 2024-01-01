@@ -39,7 +39,7 @@ def login():
             email = request.json['email']
             password = request.json['password']
             cur = mysql.connection.cursor()
-            cur.execute("SELECT * FROM users WHERE email = %s AND password = %s",(email,password))
+            cur.execute("SELECT * FROM users WHERE email = %s AND password = %s",(email,password)) 
             user = cur.fetchall()
             print(user)
             if user == ():
