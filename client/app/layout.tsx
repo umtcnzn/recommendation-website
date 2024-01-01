@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { Open_Sans } from 'next/font/google'
 import './globals.css'
 import { PrimeReactProvider} from 'primereact/api'
-import { AuthProvider, useAuth } from './_context/userContext'
-import { useEffect } from 'react'
+import { AuthProvider} from './_context/userContext'
+import Navbar from './_components/Navbar'
 
 
 const inter = Open_Sans({ subsets: ['latin'] })
@@ -18,7 +18,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-
+ 
 
   return (
     <AuthProvider>
