@@ -23,7 +23,7 @@ def books():
         try:
             cur = mysql.connection.cursor()
             
-            cur.execute("SELECT books.book_id, books.title, books.authors, "
+            cur.execute("SELECT books.book_id AS id, books.title, books.authors, "
                         "genres1.genre_name AS genre1_name, "
                         "genres2.genre_name AS genre2_name "
                         "FROM books "
@@ -42,7 +42,7 @@ def movies():
         try:
             cur = mysql.connection.cursor()
             
-            cur.execute("SELECT movies.id, movies.title, "
+            cur.execute("SELECT movies.id  AS id, movies.title, "
                         "genres1.genre_name AS genre1_name, "
                         "genres2.genre_name AS genre2_name "
                         "FROM movies "
@@ -61,7 +61,7 @@ def series():
         try:
             cur = mysql.connection.cursor()
             
-            cur.execute("SELECT series.id, series.name, "
+            cur.execute("SELECT series.id  AS id, series.name, "
                         "genres1.genre_name AS genre1_name, "
                         "genres2.genre_name AS genre2_name "
                         "FROM series "

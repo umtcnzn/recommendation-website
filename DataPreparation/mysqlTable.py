@@ -21,7 +21,7 @@ mydb = pymysql.connect(
     database=MYSQL_DB 
 )
 mycursor = mydb.cursor() 
-mycursor.execute("CREATE TABLE book_genres (genre_id INT AUTO_INCREMENT PRIMARY KEY, genre_name VARCHAR(500))") #genre_genre_ids,genre_name
+mycursor.execute("CREATE TABLE book_genres (genre_id INT AUTO_INCREMENT PRIMARY KEY, genre_name VARCHAR(500))") 
 for index, row in df.iterrows(): 
  sql = "INSERT INTO book_genres (genre_id,genre_name) VALUES (%s, %s)" 
  val = (row['genre_id'], row['genre_name']) 

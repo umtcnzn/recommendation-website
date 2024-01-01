@@ -21,20 +21,13 @@ def makeRecommendation(tableName,userId):
             userData_response = requests.get('http://localhost/series')
             allData_response = requests.get('http://localhost/watchedSeries/'+userId)
 
-        # Assuming the content is in JSON format, use .json() to extract it
-        allData = allData_response.json()
-        userData = userData_response.json()
-
-        # Create DataFrames from the extracted data
-        allDatadf = pd.DataFrame(allData)
-        userDatadf = pd.DataFrame(userData)
-
-        #return recommendationJSON
+        
+        return recommendationJSON
     
     except requests.exceptions.RequestException as e:
         print(f"Error in making HTTP request: {e}")
+        raise e
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-    
-    
+        raise e
