@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import React,{ useEffect, useState } from "react";
 import { useAuth } from "../_context/userContext";
 import { redirect } from "next/navigation";
 
@@ -12,7 +12,6 @@ function AuthLayout({children}:{
     const [bgImage,setBgImage] = useState("movies");
 
     const {user,tryFetch} = useAuth();
-
    useEffect(()=>{
         const imageInterval = setInterval(()=>{
             setBgImage(bgImages[Math.floor(Math.random()*bgImages.length)])
@@ -23,7 +22,7 @@ function AuthLayout({children}:{
     },[])
     
     if(user){
-        return redirect("/");
+        return redirect("/")
     }
     return (
     <>
@@ -34,4 +33,4 @@ function AuthLayout({children}:{
     );
 }
 
-export default AuthLayout;
+export default React.memo(AuthLayout);

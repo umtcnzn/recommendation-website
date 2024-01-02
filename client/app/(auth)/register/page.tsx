@@ -9,7 +9,7 @@ import { RegisterSchema,RegisterType } from '../validation';
 import { useRouter } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 function Register() {
 
@@ -32,7 +32,7 @@ function Register() {
 
     async function addUser() {
         try{
-            const response = await axios.post(`http://${process.env.NEXT_PUBLIC_BACKEND_HOST}/auth/register`,
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/auth/register`,
             {"username":values.username,
             "email":values.email,
             "password":values.password});
@@ -151,4 +151,4 @@ function Register() {
     </> );
 }
 
-export default Register;
+export default React.memo(Register);

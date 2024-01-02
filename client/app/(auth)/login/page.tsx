@@ -8,7 +8,7 @@ import { useFormik } from 'formik';
 
 import {  redirect, useRouter } from 'next/navigation';
 import { LoginSchema,LoginType } from '../validation';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useAuth } from '@/app/_context/userContext';
 import toast, { Toaster } from 'react-hot-toast';
@@ -22,7 +22,7 @@ import toast, { Toaster } from 'react-hot-toast';
   
     async function signIn(values:LoginType){
         try{
-            const {data} = await axios.post(`http://${process.env.NEXT_PUBLIC_BACKEND_HOST}/auth/login`,values);
+            const {data} = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/auth/login`,values);
             toast.success(data.message)
             setTimeout(()=>{
             login(data.token)
@@ -105,4 +105,4 @@ import toast, { Toaster } from 'react-hot-toast';
     </> );
     }
 
-export default Login;
+export default React.memo(Login);

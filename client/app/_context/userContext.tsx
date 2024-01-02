@@ -3,7 +3,7 @@
 import React, { createContext, useState, useContext, FC, ReactNode, useEffect } from 'react';
 import { Auth } from '../(auth)/authorization';
 
-type User = {
+export type User = {
   username: string;
   email:string;
   imgUrl:string;
