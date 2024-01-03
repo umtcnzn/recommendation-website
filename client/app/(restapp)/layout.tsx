@@ -15,7 +15,7 @@ function RestAppLayout({children}:{
     return redirect("/login")
   }
   return (
-    <div className='w-screen h-screen'>    
+    <div className='w-screen h-screen overflow-x-hidden'>    
         <Navbar/>
         <div className='pt-28'>
           {children}

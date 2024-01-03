@@ -2,47 +2,67 @@
 import Movies from '@/app/_components/Movies'
 import Series from '@/app/_components/Series'
 import BookComponent from '@/app/_components/books'
+import { useAuth } from '@/app/_context/userContext'
 import { BookType, MovieType, SeriesType } from '@/app/_types/type'
+import axios from 'axios'
 import { redirect } from 'next/navigation'
 import React from 'react'
-import { useQueryClient } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
 
 function WatchedRead({ params }: { params: { kindName: string } }) {
-  const queryClient = useQueryClient()
+
+  const {user} = useAuth()
 
   if(params.kindName === "books"){
-    const data = queryClient.getQueryData<BookType[]>("books")
-    const userData = queryClient.getQueryData<any>("read_books")
-    const read_books = data?.filter((item)=>{
-      return userData?.some((book:any)=> book.book_id === item.id)
-    })
+    const { isLoading, error, data } = useQuery<BookType[]>("all_user_books", () =>
+    axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOST}/user_data/read_books/all/${user?.username}`
+      ).then((res) => res.data).catch((err)=>console.log(err))
+  );
+
+  if(isLoading){
+    return <div className='w-screen h-screen flex items-center justify-center'> 
+      Loading...
+    </div>
+  }
+  
     return (
       <div>
-      <BookComponent data={read_books!} type='READ BOOKS'/>
+      <BookComponent data={data!} type='READ BOOKS'/>
       </div>
    )
 }
   else if(params.kindName === "movies"){
-    const data = queryClient.getQueryData<MovieType[]>("movies")
-    const userData = queryClient.getQueryData<any>("watched_movies")
-    const watched_movies = data?.filter((item)=>{
-      return userData?.some((movie:any)=> movie.movie_id === item.id)
-    })
+    const { isLoading, error, data } = useQuery<MovieType[]>("all_user_movies", () =>
+    axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOST}/user_data/watched_movies/all/${user?.username}`
+      ).then((res) => res.data).catch((err)=>console.log(err))
+    )
+    if(isLoading){
+      return <div className='w-screen h-screen flex items-center justify-center'> 
+        Loading...
+      </div>
+    }
     return (
       <div>
-        <Movies data={watched_movies!} type='WATCHED MOVIES'/>
+        <Movies data={data!} type='WATCHED MOVIES'/>
       </div>
    )
   }
   else if(params.kindName === "series"){
-    const data = queryClient.getQueryData<SeriesType[]>("series")
-    const userData = queryClient.getQueryData<any>("watched_series")
-    const watched_series = data?.filter((item)=>{
-      return userData?.some((series:any)=> series.series_id === item.id)
-    })
+    const { isLoading, error, data } = useQuery<SeriesType[]>("all_user_series", () =>
+    axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_HOST}/user_data/watched_series/all/${user?.username}`
+      ).then((res) => res.data).catch((err)=>console.log(err))
+    )
+    if(isLoading){
+      return <div className='w-screen h-screen flex items-center justify-center'> 
+        Loading...
+      </div>
+    }
     return (
       <div>
-        <Series data={watched_series!} type='WATCHED SERIES'/>
+        <Series data={data!} type='WATCHED SERIES'/>
       </div>
    )
   }

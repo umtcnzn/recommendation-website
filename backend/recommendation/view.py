@@ -11,7 +11,8 @@ def getRecommendation(tableName,userId):
     if request.method == 'GET':
         try:
             responseData = makeRecommendation(tableName,userId)
-            return responseData,200
+            print(responseData)
+            return jsonify(responseData),200
         except Exception as error:
             print(error)
             return error,400
@@ -114,14 +115,14 @@ def series():
             return error,400
             
 @recom.route('/readbooks/<userid>',methods=['GET'])
-def readBooks(userId):
+def readBooks(userid):
     if request.method == 'GET':
         try:
             cur = mysql.connection.cursor()
             cur.execute("""SELECT JSON_OBJECT(
                     'id', book_id,
                     'rating', rating) AS json_data
-                FROM read_books WHERE id = %s""", (userId,))
+                FROM read_books WHERE id = %s""", (userid,))
             user_data = cur.fetchall()
             cur.close()
             
@@ -133,14 +134,14 @@ def readBooks(userId):
             return error,400
             
 @recom.route('/watchedMovies/<userid>',methods=['GET'])
-def watchedMovies(userId):
+def watchedMovies(userid):
     if request.method == 'GET':
         try:
             cur = mysql.connection.cursor()
             cur.execute("""SELECT JSON_OBJECT(
                     'id', movie_id,
                     'rating', rating) AS json_data
-                FROM watched_movies WHERE id = %s""", (userId,))
+                FROM watched_movies WHERE id = %s""", (userid,))
             
             user_data = cur.fetchall()
             cur.close()
@@ -153,14 +154,14 @@ def watchedMovies(userId):
             return error,400
             
 @recom.route('/watchedSeries/<userid>',methods=['GET'])
-def watchedSeries(userId):
+def watchedSeries(userid):
     if request.method == 'GET':
         try:
             cur = mysql.connection.cursor()
             cur.execute("""SELECT JSON_OBJECT(
                     'id', serie_id,
                     'rating', rating) AS json_data
-                FROM watched_series WHERE id = %s""", (userId,))
+                FROM watched_series WHERE id = %s""", (userid,))
             user_data = cur.fetchall()
             cur.close()
             

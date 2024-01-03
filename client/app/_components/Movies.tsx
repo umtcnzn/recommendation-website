@@ -14,7 +14,7 @@ function Movies({data,type}:{data:MovieType[],type:string}) {
   const [searchWord,setSearchWord] = useState<string>("");
   const {user} = useAuth();
  
-  const { data:watched_movies,isLoading } = useQuery("watched_book", () =>
+  const { data:watched_movies,isLoading } = useQuery("watched_movies", () =>
   axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_HOST}/user_data/watched_movies/${user?.username}`
   ).then((res) => res.data).catch((err)=>console.log(err))

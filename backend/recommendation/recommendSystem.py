@@ -8,20 +8,19 @@ import requests
 load_dotenv()
 
 def makeRecommendation(tableName,userId):
-    
     try:
         if tableName == 'books':
-            allData_response = requests.get('http://localhost/books')
-            userData_response = requests.get('http://localhost/readBooks/'+userId)
+            allData_response = requests.get('http://127.0.0.1:5000/recom/books')
+            userData_response = requests.get(f'http://127.0.0.1:5000/recom/readbooks/{userId}')
 
         elif tableName == 'movies':
-            allData_response = requests.get('http://localhost/movies')
-            userData_response = requests.get('http://localhost/watchedMovies/'+userId)
+            allData_response = requests.get('http://127.0.0.1:5000/recom/movies')
+            userData_response = requests.get(f'http://127.0.0.1:5000/recom/watchedMovies/{userId}')
 
         elif tableName == 'series':
-            userData_response = requests.get('http://localhost/series')
-            allData_response = requests.get('http://localhost/watchedSeries/'+userId)
-
+            userData_response = requests.get('http://127.0.0.1:5000/recom/series')
+            allData_response = requests.get(f'http://127.0.0.1:5000/recom/watchedSeries/{userId}')
+        print(userData_response)
         #turn json data to dataFrame
         userData_json = userData_response.json()
         allData_json = allData_response.json()

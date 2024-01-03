@@ -61,6 +61,71 @@ def getAllReadBooks(username):
         return jsonify({'message':'An error occurred while trying to reach the books.'}),500
     
     
+@user_data.route("/watched_movies/all/<username>",methods=['GET'])
+def getAllWatchedMovies(username):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("""
+                SELECT id FROM users WHERE username = %s""",(username,))
+        user_id = cur.fetchone()[0]
+        cur.execute("""
+                SELECT JSON_OBJECT(
+                        'id', wm.id,
+                        'title', movies.title,
+                        'original_language', movies.original_language,
+                        'overview', movies.overview,
+                        'image_url', movies.poster_path,
+                        'vote_average', movies.vote_average,
+                        'release_date', movies.release_date,
+                        'genre1_name', genres1.genre_name,
+                        'genre2_name', genres2.genre_name
+                        ) AS json_data
+                        FROM watched_movies AS wm
+                        INNER JOIN movies AS movies ON movies.id = wm.movie_id
+                        INNER JOIN movie_genres AS genres1 ON movies.genre_1 = genres1.genre_ids
+                        INNER JOIN movie_genres AS genres2 ON movies.genre_2 = genres2.genre_ids
+                        WHERE wm.user_id = %s""",(user_id,))
+        row_data = cur.fetchall()
+        cur.close()
+        book_ids = [json.loads(item[0]) for item in row_data]
+        return jsonify(book_ids),200
+    except Exception as error:
+        print(error)
+        return jsonify({'message':'An error occurred while trying to reach the books.'}),500
+    
+@user_data.route("/watched_series/all/<username>",methods=['GET'])
+def getAllWatchedSeries(username):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("""
+                SELECT id FROM users WHERE username = %s""",(username,))
+        user_id = cur.fetchone()[0]
+        cur.execute("""
+                SELECT JSON_OBJECT(
+                        'id', ws.id,
+                        'title', series.name,
+                        'original_language', series.original_language,
+                        'overview', series.overview,
+                        'image_url', series.poster_path,
+                        'vote_average', series.vote_average,
+                        'release_date', series.first_air_date,
+                        'genre1_name', genres1.genre_name,
+                        'genre2_name', genres2.genre_name
+                        ) AS json_data
+                        FROM watched_series AS ws
+                        INNER JOIN series AS series ON series.id = ws.serie_id
+                        INNER JOIN series_genres AS genres1 ON series.genre_1 = genres1.genre_ids
+                        INNER JOIN series_genres AS genres2 ON series.genre_2 = genres2.genre_ids
+                        WHERE ws.user_id = %s""",(user_id,))
+        row_data = cur.fetchall()
+        cur.close()
+        book_ids = [json.loads(item[0]) for item in row_data]
+        return jsonify(book_ids),200
+    except Exception as error:
+        print(error)
+        return jsonify({'message':'An error occurred while trying to reach the books.'}),500
+    
+    
 @user_data.route("/read_books/<username>/<book_id>",methods=['DELETE'])
 def deleteReadBook(username,book_id):
     try:
