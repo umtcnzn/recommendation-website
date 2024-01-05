@@ -122,9 +122,13 @@ def readBooks(userid):
             cur.execute("""SELECT JSON_OBJECT(
                     'id', book_id,
                     'rating', rating) AS json_data
-                FROM read_books WHERE id = %s""", (userid,))
+                FROM read_books WHERE user_id = %s""", (userid,))
+            
             user_data = cur.fetchall()
             cur.close()
+            print(user_data)
+            if(user_data == ()):
+                return jsonify({"message": "No User Found!"}),400
             
             formatted_data = [json.loads(item[0]) for item in user_data]
             
@@ -141,7 +145,7 @@ def watchedMovies(userid):
             cur.execute("""SELECT JSON_OBJECT(
                     'id', movie_id,
                     'rating', rating) AS json_data
-                FROM watched_movies WHERE id = %s""", (userid,))
+                FROM watched_movies WHERE user_id = %s""", (userid,))
             
             user_data = cur.fetchall()
             cur.close()
@@ -161,7 +165,7 @@ def watchedSeries(userid):
             cur.execute("""SELECT JSON_OBJECT(
                     'id', serie_id,
                     'rating', rating) AS json_data
-                FROM watched_series WHERE id = %s""", (userid,))
+                FROM watched_series WHERE user_id = %s""", (userid,))
             user_data = cur.fetchall()
             cur.close()
             
