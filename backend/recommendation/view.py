@@ -127,6 +127,9 @@ def readBooks(userid):
                 FROM read_books WHERE user_id = %s""", (userid,))
             user_data = cur.fetchall()
             cur.close()
+            print(user_data)
+            if(user_data == ()):
+                return jsonify({"message": "No User Found!"}),400
             
             formatted_data = [json.loads(item[0]) for item in user_data]
             
