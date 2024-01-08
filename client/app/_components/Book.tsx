@@ -3,29 +3,38 @@ import { BookType } from '../_types/type'
 import { Rating } from 'primereact/rating';
 import { Chip } from 'primereact/chip';
 import { Button } from 'primereact/button';
-import axios, { AxiosError } from 'axios';
-import { User, useAuth } from '../_context/userContext';
+import axios from 'axios';
+import { User } from '../_context/userContext';
 import { useMutation, useQueryClient } from 'react-query';
+import Modal from './Modal';
 
 function Book({book,isItRead,user}:{book:BookType,isItRead:boolean,user:User}) {
 
-    const [isRead,setIsRead] = useState(isItRead);
+    const [isOpen,setIsOpen] = useState(false);
+    const [isLoading,setIsLoading] = useState(false);
 
-
-    const Label = isRead?"":"I Read"
-    const Icon = isRead? "pi pi-check":"pi pi-plus"
+    const Label = isItRead?"":"I Read"
+    const Icon = isItRead? "pi pi-check":"pi pi-plus"
 
     const queryClient = useQueryClient()
+
+    const openModal = () => {
+        setIsOpen(true);
+    }
+
+    const closeModal = () =>{
+        setIsOpen(false);
+        setIsLoading(false);
+    }
 
 
     const addMutation = useMutation((newBook:any) => {
         return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/user_data/read_books`, newBook)
     },
     {
-        onSuccess:(data)=>{
-            setIsRead(true);
-            alert(data.data.message)
-            queryClient.invalidateQueries('read_books')
+        onSuccess:(response)=>{
+            alert(response.data.message);
+            queryClient.invalidateQueries('read_books');
         }
     })
 
@@ -33,15 +42,22 @@ function Book({book,isItRead,user}:{book:BookType,isItRead:boolean,user:User}) {
         return axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/user_data/read_books/${user?.username}/${book.id}`)
     },
     {
-        onSuccess:(data)=>{
-            setIsRead(false);
-            alert(data.data.message)
+        onSuccess:(response)=>{
+            alert(response.data.message)
+            setIsLoading(false)
             queryClient.invalidateQueries('read_books')
-        }
+            queryClient.invalidateQueries('all_user_books')
+        },
     })
   
 
+    function onAccept(rating:number){
+        addMutation.mutate({"username":user.username,"book_id":book.id,"rating":rating})
+        closeModal()
+    }
+
   return (
+    <>
     <div key={book.id} className='p-6 rounded-lg shadow-md bg-white'>
         <div className="flex flex-col text-black">
             <div className='w-full flex justify-center'>
@@ -57,13 +73,18 @@ function Book({book,isItRead,user}:{book:BookType,isItRead:boolean,user:User}) {
                 <Chip label={book.genre2_name} className='text-xs'/>
             </div>
             <div className='flex justify-end mt-5'>
-                <Button size='small' icon={Icon} label={Label} onClick={()=>{!isRead? 
-                addMutation.mutate({"username":user?.username, "book_id":book.id,"rating":4}):
-                deleteMutation.mutate()}} />
+                <Button loading={isLoading} size='small' icon={Icon} label={Label} 
+                onClick={()=> {!isItRead ? openModal() : deleteMutation.mutate(); setIsLoading(true)}} />
             </div>
         </div>
+        <Modal isOpen={isOpen} closeModal={closeModal} onAccept={onAccept}>
+            <div className='font-medium'>
+                {book.title}
+            </div>
+        </Modal>
     </div>
+    </>
   )
 }
 
-export default React.memo(Book)
+export default Book

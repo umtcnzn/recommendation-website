@@ -12,7 +12,8 @@ function Books() {
   const { isLoading, error, data } = useQuery<BookType[]>("books", () =>
     axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_HOST}/books/`
-      ).then((res) => res.data).catch((err)=>console.log(err))
+      ).then((res) => res.data).catch((err)=>console.log(err)),{refetchOnWindowFocus:false,refetchOnReconnect:false,
+        refetchOnMount:false}
   );
   
   if(isLoading){

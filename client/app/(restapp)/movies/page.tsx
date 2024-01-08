@@ -12,7 +12,8 @@ function MoviesPage() {
   const { isLoading, error, data } = useQuery<MovieType[]>("movies", () =>
     axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_HOST}/movies/`
-      ).then((res) => res.data).catch((err)=>console.log(err))
+      ).then((res) => res.data).catch((err)=>console.log(err)),{refetchOnWindowFocus:false,refetchOnReconnect:false,
+        refetchOnMount:false}
   );
 
 

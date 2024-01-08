@@ -2,16 +2,18 @@ import json
 from flask import Blueprint,jsonify,request,make_response
 from app import mysql
 from .recommendSystem import makeRecommendation
-# Artık example_module kullanabilirsiniz
 
 recom = Blueprint('recom',__name__)
             
-@recom.route('/recommendation/<tableName>/<userId>',methods=['GET'])
-def getRecommendation(tableName,userId):
+@recom.route('/recommendation/<tableName>/<username>',methods=['GET'])
+def getRecommendation(tableName,username):
     if request.method == 'GET':
         try:
+            cur = mysql.connection.cursor()
+            cur.execute("""
+                    SELECT id FROM users WHERE username = %s""",(username,))
+            userId = cur.fetchone()[0]
             responseData = makeRecommendation(tableName,userId)
-            print(responseData)
             return jsonify(responseData),200
         except Exception as error:
             print(error)
@@ -122,7 +124,7 @@ def readBooks(userid):
             cur.execute("""SELECT JSON_OBJECT(
                     'id', book_id,
                     'rating', rating) AS json_data
-                FROM read_books WHERE id = %s""", (userid,))
+                FROM read_books WHERE user_id = %s""", (userid,))
             user_data = cur.fetchall()
             cur.close()
             
@@ -141,7 +143,7 @@ def watchedMovies(userid):
             cur.execute("""SELECT JSON_OBJECT(
                     'id', movie_id,
                     'rating', rating) AS json_data
-                FROM watched_movies WHERE id = %s""", (userid,))
+                FROM watched_movies WHERE user_id = %s""", (userid,))
             
             user_data = cur.fetchall()
             cur.close()
@@ -161,7 +163,7 @@ def watchedSeries(userid):
             cur.execute("""SELECT JSON_OBJECT(
                     'id', serie_id,
                     'rating', rating) AS json_data
-                FROM watched_series WHERE id = %s""", (userid,))
+                FROM watched_series WHERE user_id = %s""", (userid,))
             user_data = cur.fetchall()
             cur.close()
             

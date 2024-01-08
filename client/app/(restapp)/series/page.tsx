@@ -10,7 +10,8 @@ import { useQuery } from 'react-query';
 function SeriesPage() {
   const { isLoading, error, data } = useQuery<SeriesType[]>("series", () =>
   axios.get(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/series/`)
-  .then((res) => res.data).catch((err)=>console.log(err))
+  .then((res) => res.data).catch((err)=>console.log(err)),{refetchOnWindowFocus:false,refetchOnReconnect:false,
+    refetchOnMount:false}
   );
 
   

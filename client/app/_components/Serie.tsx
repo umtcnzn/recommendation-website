@@ -8,16 +8,27 @@ import { Button } from 'primereact/button';
 import axios, { AxiosError } from 'axios';
 import { User } from '../_context/userContext';
 import { useMutation, useQueryClient } from 'react-query';
+import Modal from './Modal';
 
 function Serie({serie,isItWatched,user}:{serie:SeriesType,isItWatched:boolean,user:User}) {
 
-    const [isWatched,setisWatched] = useState(isItWatched);
+    const [isOpen,setIsOpen] = useState(false);
+    const [isLoading,setIsLoading] = useState(false);
 
+    const Label = isItWatched?"":"I Watched"
+    const Icon = isItWatched? "pi pi-check":"pi pi-plus"
 
-    const Label = isWatched?"":"I Watched"
-    const Icon = isWatched? "pi pi-check":"pi pi-plus"
+    const queryClient = useQueryClient();
 
-    const queryClient = useQueryClient()
+    const openModal = () => {
+        setIsOpen(true);
+    }
+
+    const closeModal = () =>{
+        setIsOpen(false);
+        setIsLoading(false);
+    }
+
 
 
     const addMutation = useMutation((newSerie:any) => {
@@ -25,7 +36,6 @@ function Serie({serie,isItWatched,user}:{serie:SeriesType,isItWatched:boolean,us
     },
     {
         onSuccess:(data)=>{
-            setisWatched(true);
             alert(data.data.message)
             queryClient.invalidateQueries('watched_series')
         }
@@ -36,11 +46,16 @@ function Serie({serie,isItWatched,user}:{serie:SeriesType,isItWatched:boolean,us
     },
     {
         onSuccess:(data)=>{
-            setisWatched(false);
             alert(data.data.message)
+            setIsLoading(false);
             queryClient.invalidateQueries('watched_series')
         }
     })
+
+    function onAccept(rating:number){
+        addMutation.mutate({"username":user.username,"serie_id":serie.id,"rating":rating})
+        closeModal()
+    }
   
 
   return (
@@ -59,10 +74,14 @@ function Serie({serie,isItWatched,user}:{serie:SeriesType,isItWatched:boolean,us
                 <Chip label={serie.genre2_name} className='text-xs'/>
             </div>
             <div className='flex justify-end mt-5'>
-                <Button size='small' icon={Icon} label={Label} onClick={()=>{!isWatched? 
-                addMutation.mutate({"username":user?.username, "serie_id":serie.id,"rating":4}):
-                deleteMutation.mutate()}} />
+                <Button size='small' icon={Icon} label={Label} loading={isLoading}
+                onClick={()=>{!isItWatched ? openModal():deleteMutation.mutate()}} />
             </div>
+            <Modal isOpen={isOpen} closeModal={closeModal} onAccept={onAccept}>
+                <div className='font-medium'>
+                    {serie.title}
+                </div>
+            </Modal>
         </div>
     </div>
   )
