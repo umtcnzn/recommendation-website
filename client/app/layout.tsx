@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import { Open_Sans } from 'next/font/google'
 import './globals.css'
 import { PrimeReactProvider} from 'primereact/api'
-import { AuthProvider } from './_context/userContext'
+import { AuthProvider} from './_context/userContext'
+import ReactQueryProvider from './_context/queryProvider'
+
 
 
 const inter = Open_Sans({ subsets: ['latin'] })
@@ -17,16 +19,19 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  
+ 
+
   return (
-    <AuthProvider>
-      <PrimeReactProvider>
-        <html lang="en">
-          <body>
-              {children}
-          </body>
-        </html>
-      </PrimeReactProvider>
-    </AuthProvider>
+    <ReactQueryProvider>
+      <AuthProvider>
+       <PrimeReactProvider>
+          <html lang="en">
+            <body>
+               {children}
+           </body>
+         </html>
+        </PrimeReactProvider>
+      </AuthProvider>
+    </ReactQueryProvider>
   )
 }

@@ -1,11 +1,9 @@
 from flask import Blueprint,jsonify,request,make_response
 from app import mysql
-from flask_mysqldb import MySQL
 import jwt
 import datetime
 from dotenv import load_dotenv
 import os
-from flask_cors import CORS
 
 load_dotenv()
 
@@ -24,10 +22,12 @@ def register():
             cur.execute("INSERT INTO users(username,email,password) VALUES(%s,%s,%s)",(username,email,password))
             mysql.connection.commit()
             cur.close()
-            return jsonify({"message":"User created successfully"}),200
+            return jsonify({"message":f"User '{username}' created successfully"}),200
         except Exception as e:
-            print(e)
-            return jsonify({"message": f"{str(e)}"}),400
+            if "Duplicate entry" in str(e):
+                return jsonify({'message': 'Username or Email already exists'}), 400
+            else:
+                return jsonify({'message': 'An error occurred while adding user'}), 500
     return jsonify({"message":"Invalid Request Method"}),405
 
 
@@ -39,11 +39,10 @@ def login():
             email = request.json['email']
             password = request.json['password']
             cur = mysql.connection.cursor()
-            cur.execute("SELECT * FROM users WHERE email = %s AND password = %s",(email,password))
+            cur.execute("SELECT * FROM users WHERE email = %s AND password = %s",(email,password)) 
             user = cur.fetchall()
-            print(user)
             if user == ():
-                return jsonify({"message":"Email or Password is incorrect"}),400
+                return jsonify({"message":"Email or Password is incorrect"}),401
             json_data = []
             columns = [column[0] for column in cur.description]
             cur.close()
@@ -52,9 +51,8 @@ def login():
             json_user = json_data[0]
             token = jwt.encode(payload={'username':json_user['username'],'email':json_user['email'],'imgUrl':json_user['imgUrl'],
                                 'exp':datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},algorithm="HS256",key=SECRET_KEY)
-            return jsonify({"token":token}),200
+            return jsonify({"token":token,"message":f"'{json_user['username']}' succesfully logged!"}),200
         except Exception as error:
-            print(error)
             return {'message': f'{str(error)}'},400
 
 
@@ -71,3 +69,7 @@ def protected():
         return jsonify({'message': 'Token Expired!'}), 401
     except jwt.InvalidTokenError:
         return jsonify({'message': 'Invalid Token!'}), 401
+    
+
+
+

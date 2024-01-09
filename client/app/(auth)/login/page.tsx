@@ -8,26 +8,30 @@ import { useFormik } from 'formik';
 
 import {  redirect, useRouter } from 'next/navigation';
 import { LoginSchema,LoginType } from '../validation';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import axios, { AxiosError } from 'axios';
 import { useAuth } from '@/app/_context/userContext';
+import toast, { Toaster } from 'react-hot-toast';
 
-
- function LoginClient() {
+ function Login() {
 
     const router = useRouter();
 
-    const {login} = useAuth();
+    const {login,user} = useAuth();
     const [loading,setLoading] = useState(false);
-
-    
   
     async function signIn(values:LoginType){
         try{
-            const {data} = await axios.post(`http://${process.env.NEXT_PUBLIC_BACKEND_HOST}/auth/login`,values);
+            const {data} = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/auth/login`,values);
+            toast.success(data.message)
+            setTimeout(()=>{
             login(data.token)
+            },2000)
         }
         catch(error){
+            if(error instanceof AxiosError){
+                toast.error(error?.response?.data.message,{duration:2000});
+            }
         }
         finally{
             setLoading(false);
@@ -94,10 +98,11 @@ import { useAuth } from '@/app/_context/userContext';
                     <div className='justify-end flex mt-4'>
                         <Button label='Sign in' size='small' type='submit' loading={loading}  />
                     </div>
+                    <Toaster position='top-right'/>
                 </div>
             </form>
         </Card>
     </> );
     }
 
-export default LoginClient;
+export default React.memo(Login);

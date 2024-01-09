@@ -8,11 +8,15 @@ import { useFormik } from 'formik';
 import { RegisterSchema,RegisterType } from '../validation';
 import { useRouter } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
+import React, { useState } from 'react';
+
 function Register() {
 
     const router = useRouter();
+    const [buttonLoading,setButtonLoading] = useState(false);
 
-    const {handleChange,handleSubmit,values,errors,touched} = useFormik<RegisterType>({
+    const {handleChange,handleSubmit,values,errors,touched,handleReset} = useFormik<RegisterType>({
         initialValues:{
             username: '',
             email:'',
@@ -21,22 +25,36 @@ function Register() {
         },
         validationSchema:RegisterSchema,
         onSubmit:(values) => {
+            setButtonLoading(true);
             addUser();
         }
     })
 
     async function addUser() {
         try{
-            const response = await axios.post("http://localhost:5000/add_user",
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/auth/register`,
             {"username":values.username,
             "email":values.email,
             "password":values.password});
-            console.log(response);
+            toast.success(response.data.message,{duration:1200})
+            toast.promise(new Promise((resolve)=>{
+                setTimeout(resolve,1500);
+            }),{
+                loading:"Redirecting to Login Page...",
+                success:"Redirecting successful!",
+                error:"Redirecting failed!"
+            }).then(() =>
+                router.push("/")
+            )
         }
         catch(error){
             if(error instanceof AxiosError){
-                console.log(error.response?.data)
+                toast.error(error?.response?.data.message,{duration:2000});
             }
+        }
+        finally{
+            setButtonLoading(false);
+            handleReset(values);
         }
     }
 
@@ -123,8 +141,9 @@ function Register() {
                     className='text-gray-600 text-sm mt-2 cursor-pointer w-[290px] underline'>If have an account click here to login.</p>
 
                     <div className='justify-end flex mt-4'>
-                        <Button label='Sign Up' size='small' type='submit' />
+                        <Button label='Sign Up' size='small' type='submit' loading={buttonLoading}/>
                     </div>
+                    <Toaster position='top-right'/>
                 </div>
             </form>
 
@@ -132,4 +151,4 @@ function Register() {
     </> );
 }
 
-export default Register;
+export default React.memo(Register);
