@@ -47,7 +47,7 @@ function BooksComponent({data,type}:{data:BookType[],type:string}) {
       <div className='bg-gray-700 mx-10 drop-shadow-2xl px-8 py-4 rounded-xl'>
           <p className='flex justify-center text-3xl font-bold'>{type}</p>
           <div className='flex justify-center mb-10 gap-4'>
-            <InputText className='w-[400px]' placeholder='Search For Book...' value={searchWord} 
+            <InputText className='w-[400px]' placeholder='Search For Books...' value={searchWord} 
             onChange={(e:React.ChangeEvent<HTMLInputElement>)=>setSearchWord(e.target.value)}/>
           </div>
           <Pagination totalNumbers={filteredBooks.length} dataPerPage={booksPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage}/>

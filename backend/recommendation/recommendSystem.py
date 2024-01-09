@@ -18,9 +18,9 @@ def makeRecommendation(tableName,userId):
             userData_response = requests.get(f'http://127.0.0.1:5000/recom/watchedMovies/{userId}')
 
         elif tableName == 'series':
-            userData_response = requests.get('http://127.0.0.1:5000/recom/series')
-            allData_response = requests.get(f'http://127.0.0.1:5000/recom/watchedSeries/{userId}')
-        print(userData_response)
+            allData_response = requests.get('http://127.0.0.1:5000/recom/series')
+            userData_response = requests.get(f'http://127.0.0.1:5000/recom/watchedSeries/{userId}')
+        
         #turn json data to dataFrame
         userData_json = userData_response.json()
         allData_json = allData_response.json()

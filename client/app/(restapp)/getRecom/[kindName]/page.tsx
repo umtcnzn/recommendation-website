@@ -53,7 +53,7 @@ function getRecom({ params }: { params: { kindName: string }} ) {
   else if(params.kindName === "series"){
     const { isLoading, error, data } = useQuery<SeriesType[]>("recommended_series", () =>
     axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_HOST}/recom/recommendation/books/${user?.username}`
+    `${process.env.NEXT_PUBLIC_BACKEND_HOST}/recom/recommendation/series/${user?.username}`
       ).then((res) => res.data).catch((err)=>console.log(err))
     )
     if(isLoading){

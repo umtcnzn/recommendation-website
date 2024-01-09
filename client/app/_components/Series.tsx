@@ -46,7 +46,7 @@ function Series({data,type}:{data:SeriesType[],type:string}) {
       <div className='bg-gray-700 mx-10 drop-shadow-2xl px-8 py-4 rounded-xl'>
           <p className='flex justify-center text-3xl font-bold'>{type}</p>
           <div className='flex justify-center mb-10 gap-4'>
-            <InputText className='w-[400px]' placeholder='Search For Movie...' value={searchWord} onChange={(e:any)=>setSearchWord(e.target.value)}/>
+            <InputText className='w-[400px]' placeholder='Search For Series...' value={searchWord} onChange={(e:any)=>setSearchWord(e.target.value)}/>
           </div>
           <Pagination totalNumbers={filteredSeries.length} dataPerPage={seriesPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
           <div className='flex justify-center'>
